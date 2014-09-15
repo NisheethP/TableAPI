@@ -37,15 +37,23 @@ public:
 	public:
 		int x;
 		int y;
+
 		Coord()
 		{
 			x = 0;
 			y = 0;
 		};
+
 		Coord(int X, int Y)
 		{
 			x = X;
 			y = Y;
+		}
+
+		Coord(Coord pCoord)
+		{
+			this->x = pCoord.x;
+			this->y = pCoord.y;
 		}
 
 		bool operator== (Coord p_Coord)
