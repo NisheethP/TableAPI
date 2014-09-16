@@ -2,31 +2,46 @@
 
 #ifndef _TABLE_H_
 #define _TABLE_H_
+
 #include <Windows.h>
+#include <string>
+#include <vector>
+
+using std::string;
+using std::vector;
 
 template <class T>
 class Table
 {
+	typedef vector<T> TVector1D;
+	typedef vector<TVector1D> TVector2D;
 	class Coord;
 
 	int row;
 	int column;
 
+	vector<string> colNames;
+	TVector2D tableData;
+
 	Coord initCoord;
+	Coord initHiCoord;
 	Coord hiCoord;
 	Coord deltaCoord;
 
 	Coord static ConvCoord(Coord);
 
-	Coord (*HiToAbs) (Coord);
-	Coord (*AbsToHi) (Coord);
+	Coord HiToAbs (Coord);
+	Coord AbsToHi (Coord);
 
 	bool isMathFunction;
 
+	void static gotoxy(int column = wherex(), int line = wherey());
+	int static wherex();
+	int static wherey();
 
 public:
 	Table();
-	Table(int pRow, int pCol, Coord pInitCoord, Coord pHiCoord, Coord DeltaCoord);
+	Table(int pRow, int pCol, Coord pInitCoord, Coord pHiCoord, Coord pInitHiCoord, Coord pDeltaCoord, vector<string> pColNames);
 
 	class Coord
 	{
@@ -65,14 +80,16 @@ public:
 	void setInitCoord(Coord pCoord);
 	void setDeltaCoord(Coord pCoord);
 	void setHiCoord(Coord pCoord);
-	void setHiToAbs(Coord(*pFunc) (Coord));
-	void setAbsToHi(Coord(*pFunc) (Coord));	
+	void setInitHiCoord(Coord pCoord);
 
 	int getRow();
 	int getCol();
 	Coord getInitCoord();
 	Coord getDeltaCoord();
 	Coord getHiCoord();
+	Coord getInitHiCoord();
+
+	void drawTable();
 
 	~Table();
 };

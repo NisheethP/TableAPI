@@ -1,18 +1,28 @@
 #include "Table.h"
 
 template <class T>
-Table<T>::Table(int pRow, int pCol, Coord pInitCoord, Coord pHiCoord, Coord DeltaCoord) : 
-row(pRow), 
+Table<T>::Table(int pRow, int pCol, Coord pInitCoord, Coord pHiCoord, Coord pInitHiCoord, Coord pDeltaCoord, vector<string> pColNames) :
+row(pRow),
 column(pCol),
 initCoord(pInitCoord),
 hiCoord(pHiCoord),
 deltaCoord(pDeltaCoord),
+initHiCoord(pInitHiCoord),
+/*tableData(row, TVector1D ( column, ))*/
 isMathFunction(false)
 {
 	if (column == 2)
 		isMathFunction = true;
-	HiToAbs = &(ConvCoord);
-	AbsToHigh = &(ConvCoord);
+
+	colNames = pColNames;
+	
+	unsigned min = tableData.size() < row ? tableData.size() : row;
+}
+
+template <class T>
+Table<T>::Table()
+{
+	Table(1, 1, { 0, 0 }, { 0, 0 }, { 0, 0 });
 }
 
 template <class T>
@@ -54,15 +64,9 @@ void Table<T>::setHiCoord(Coord pCoord)
 }
 
 template <class T>
-void Table<T>::setHiToAbs(Coord(*pFunc) (Coord))
+void Table<T>::setInitHiCoord(Coord pCoord)
 {
-	this->HiToAbs = pFunc;
-}
-
-template <class T>
-void Table<T>::setAbsToHi(Coord(*pFunc) (Coord))
-{
-	this->AbsToHi = pFunc;
+	this->initHiCoord = pCoord;
 }
 
 template <class T>
@@ -98,14 +102,79 @@ Table<T>::template Coord Table<T>::getHiCoord()
 	return hiCoord;
 }
 
+template <class T>
+Table<T>::template Coord Table<T>::getInitHiCoord()
+{
+	return ìnitHiCoord;
+}
+
+//=================================
+// STATIC WINDOW CURSOR FUNCTIONS
+//=================================
+
+template <class T>
+void static Table<T>::gotoxy(int column = wherex(), int line = wherey())
+{
+	COORD coord;
+	coord.X = column;
+	coord.Y = line;
+	SetConsoleCursorPosition(
+		GetStdHandle(STD_OUTPUT_HANDLE),
+		coord
+		);
+}
+
+template <class T>
+int static Table<T>::wherex()
+{
+	CONSOLE_SCREEN_BUFFER_INFO csbi;
+	if (!GetConsoleScreenBufferInfo(
+		GetStdHandle(STD_OUTPUT_HANDLE),
+		&csbi
+		))
+		return -1;
+	return csbi.dwCursorPosition.Y;
+}
+
+template <class T>
+int static Table<T>::wherey()
+{
+	CONSOLE_SCREEN_BUFFER_INFO csbi;
+	if (!GetConsoleScreenBufferInfo(
+		GetStdHandle(STD_OUTPUT_HANDLE),
+		&csbi
+		))
+		return -1;
+	return csbi.dwCursorPosition.Y;
+}
+
 //==============================
 // OTHER FUNCTIONS
 //==============================
 
 template <class T>
-Table<T>::template Coord static Table<T>::ConvCoord(Coord pCoord)
+Table<T>::template Coord Table<T>::HiToAbs(Coord pCoord)
 {
-	return pCoord;
+	Coord rCoord = { 0, 0 };
+
+	rCoord.x = pCoord.x - getInitHiCoord().x;
+	rCoord.x /= getDeltaCoord().x;
+
+	rCoord.y = pCoord.y - getInitHiCoord().y;
+	rCoord.y /= getDeltaCoord().y;
+
+	return rCoord;
+}
+
+template <class T>
+Table<T>::template Coord Table<T>::AbsToHi(Coord pCoord)
+{
+	Coord rCoord = { 0, 0 };
+
+	rCoord.x = getDeltaCoord().x * pCoord.x + getInitHiCoord().x;
+
+	rCoord.y = getDeltaCoord().y * pCoord.y + getInitHiCoord().y;
+	return rCoord;
 }
 
 template <class T>
@@ -139,4 +208,10 @@ void Table<T>::delight(Coord crd, int length)
 
 	//cout << endl;
 	//cout << wrd;
+}
+
+template <class T>
+void Table<T>::drawTable()
+{
+	gotoxy( );
 }
