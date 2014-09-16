@@ -4,13 +4,6 @@
 #define _TABLE_H_
 #include <Windows.h>
 
-#ifndef _COORD_
-#define _COORDS_
-
-
-
-#endif
-
 template <class T>
 class Table
 {
@@ -23,6 +16,8 @@ class Table
 	Coord hiCoord;
 	Coord deltaCoord;
 
+	Coord static ConvCoord(Coord);
+
 	Coord (*HiToAbs) (Coord);
 	Coord (*AbsToHi) (Coord);
 
@@ -31,6 +26,7 @@ class Table
 
 public:
 	Table();
+	Table(int pRow, int pCol, Coord pInitCoord, Coord pHiCoord, Coord DeltaCoord);
 
 	class Coord
 	{
@@ -48,12 +44,6 @@ public:
 		{
 			x = X;
 			y = Y;
-		}
-
-		Coord(Coord pCoord)
-		{
-			this->x = pCoord.x;
-			this->y = pCoord.y;
 		}
 
 		bool operator== (Coord p_Coord)
@@ -74,13 +64,15 @@ public:
 	void setCol(int pCol);
 	void setInitCoord(Coord pCoord);
 	void setDeltaCoord(Coord pCoord);
+	void setHiCoord(Coord pCoord);
 	void setHiToAbs(Coord(*pFunc) (Coord));
-	void setAbsToHi(Coord(*pFunc) (Coord));
+	void setAbsToHi(Coord(*pFunc) (Coord));	
 
 	int getRow();
 	int getCol();
 	Coord getInitCoord();
 	Coord getDeltaCoord();
+	Coord getHiCoord();
 
 	~Table();
 };
