@@ -6,15 +6,17 @@
 #include <Windows.h>
 #include <string>
 #include <vector>
+#include <tuple>
 
 using std::string;
 using std::vector;
+using std::tuple;
 
-template <class T>
+template <class... T>
 class Table
 {
-	typedef vector<T> TVector1D;
-	typedef vector<TVector1D> TVector2D;
+	typedef tuple<&T> TTuple;
+	typedef vector<TTuple> TVector2D;
 	class Coord;
 
 	int row;

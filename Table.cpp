@@ -8,15 +8,12 @@ initCoord(pInitCoord),
 hiCoord(pHiCoord),
 deltaCoord(pDeltaCoord),
 initHiCoord(pInitHiCoord),
-/*tableData(row, TVector1D ( column, ))*/
 isMathFunction(false)
 {
 	if (column == 2)
 		isMathFunction = true;
 
 	colNames = pColNames;
-	
-	unsigned min = tableData.size() < row ? tableData.size() : row;
 }
 
 template <class T>
