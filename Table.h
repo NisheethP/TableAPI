@@ -12,10 +12,10 @@ using std::string;
 using std::vector;
 using std::tuple;
 
-template <class... T>
+template <class T, class... Other>
 class Table
 {
-	typedef tuple<&T> TTuple;
+	typedef tuple<T, Other...> TTuple;
 	typedef vector<TTuple> TVector2D;
 	class Coord;
 

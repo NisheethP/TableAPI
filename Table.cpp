@@ -1,7 +1,8 @@
 #include "Table.h"
 
-template <class T>
-Table<T>::Table(int pRow, int pCol, Coord pInitCoord, Coord pHiCoord, Coord pInitHiCoord, Coord pDeltaCoord, vector<string> pColNames) :
+
+template <class T, class... Other>
+Table<T, Other...>::Table(int pRow, int pCol, Coord pInitCoord, Coord pHiCoord, Coord pInitHiCoord, Coord pDeltaCoord, vector<string> pColNames) :
 row(pRow),
 column(pCol),
 initCoord(pInitCoord),
@@ -16,64 +17,64 @@ isMathFunction(false)
 	colNames = pColNames;
 }
 
-template <class T>
-Table<T>::Table()
+template <class T, class... Other>
+Table<T, Other...>::Table()
 {
 	Table(1, 1, { 0, 0 }, { 0, 0 }, { 0, 0 });
 }
 
-template <class T>
-Table<T>::~Table()
+template <class T, class... Other>
+Table<T, Other...>::~Table()
 {
 };
 
 //==============================
 // SETTING DATA MEMBER
 //==============================
-template <class T>
-void Table<T>::setRow(int pRow)
+template <class T, class... Other>
+void Table<T, Other...>::setRow(int pRow)
 {
 	this->row = pRow;
 }
 
-template <class T>
-void Table<T>::setCol(int pCol)
+template <class T, class... Other>
+void Table<T, Other...>::setCol(int pCol)
 {
 	this->column = pCol;
 }
 
-template <class T>
-void Table<T>::setInitCoord(Coord pCoord)
+template <class T, class... Other>
+void Table<T, Other...>::setInitCoord(Coord pCoord)
 {
 	this->initCoord = pCoord;
 }
 
-template <class T>
-void Table<T>::setDeltaCoord(Coord pCoord)
+template <class T, class... Other>
+void Table<T, Other...>::setDeltaCoord(Coord pCoord)
 {
 	this->deltaCoord = pCoord;
 }
 
-template <class T>
-void Table<T>::setHiCoord(Coord pCoord)
+template <class T, class... Other>
+void Table<T, Other...>::setHiCoord(Coord pCoord)
 {
 	this->hiCoord = pCoord;
 }
 
-template <class T>
-void Table<T>::setInitHiCoord(Coord pCoord)
+template <class T, class... Other>
+void Table<T, Other...>::setInitHiCoord(Coord pCoord)
 {
 	this->initHiCoord = pCoord;
 }
 
-template <class T>
-int Table<T>::getRow()
+template <class T, class... Other>
+int Table<T, Other...>::getRow()
 {
 	return row;
 }
 
-template <class T>
-int Table<T>::getCol()
+template <class T, class... Other>
+int Table<T, Other...>::getCol()
 {
 	return column;
 }
@@ -81,26 +82,26 @@ int Table<T>::getCol()
 //==============================
 // GETTING DATA MEMBER
 //==============================
-template <class T>
-Table<T>::template Coord Table<T>::getInitCoord()
+template <class T, class... Other>
+Table<T, Other...>::template Coord Table<T, Other...>::getInitCoord()
 {
 	return initCoord;
 }
 
-template <class T>
-Table<T>::template Coord Table<T>::getDeltaCoord()
+template <class T, class... Other>
+Table<T, Other...>::template Coord Table<T, Other...>::getDeltaCoord()
 {
 	return deltaCoord;
 }
 
-template <class T>
-Table<T>::template Coord Table<T>::getHiCoord()
+template <class T, class... Other>
+Table<T, Other...>::template Coord Table<T, Other...>::getHiCoord()
 {
 	return hiCoord;
 }
 
-template <class T>
-Table<T>::template Coord Table<T>::getInitHiCoord()
+template <class T, class... Other>
+Table<T, Other...>::template Coord Table<T, Other...>::getInitHiCoord()
 {
 	return ìnitHiCoord;
 }
@@ -109,8 +110,8 @@ Table<T>::template Coord Table<T>::getInitHiCoord()
 // STATIC WINDOW CURSOR FUNCTIONS
 //=================================
 
-template <class T>
-void static Table<T>::gotoxy(int column = wherex(), int line = wherey())
+template <class T, class... Other>
+void static Table<T, Other...>::gotoxy(int column = wherex(), int line = wherey())
 {
 	COORD coord;
 	coord.X = column;
@@ -121,8 +122,8 @@ void static Table<T>::gotoxy(int column = wherex(), int line = wherey())
 		);
 }
 
-template <class T>
-int static Table<T>::wherex()
+template <class T, class... Other>
+int static Table<T, Other...>::wherex()
 {
 	CONSOLE_SCREEN_BUFFER_INFO csbi;
 	if (!GetConsoleScreenBufferInfo(
@@ -133,8 +134,8 @@ int static Table<T>::wherex()
 	return csbi.dwCursorPosition.Y;
 }
 
-template <class T>
-int static Table<T>::wherey()
+template <class T, class... Other>
+int static Table<T, Other...>::wherey()
 {
 	CONSOLE_SCREEN_BUFFER_INFO csbi;
 	if (!GetConsoleScreenBufferInfo(
@@ -149,8 +150,8 @@ int static Table<T>::wherey()
 // OTHER FUNCTIONS
 //==============================
 
-template <class T>
-Table<T>::template Coord Table<T>::HiToAbs(Coord pCoord)
+template <class T, class... Other>
+Table<T, Other...>::template Coord Table<T, Other...>::HiToAbs(Coord pCoord)
 {
 	Coord rCoord = { 0, 0 };
 
@@ -163,8 +164,8 @@ Table<T>::template Coord Table<T>::HiToAbs(Coord pCoord)
 	return rCoord;
 }
 
-template <class T>
-Table<T>::template Coord Table<T>::AbsToHi(Coord pCoord)
+template <class T, class... Other>
+Table<T, Other...>::template Coord Table<T, Other...>::AbsToHi(Coord pCoord)
 {
 	Coord rCoord = { 0, 0 };
 
@@ -174,8 +175,8 @@ Table<T>::template Coord Table<T>::AbsToHi(Coord pCoord)
 	return rCoord;
 }
 
-template <class T>
-void Table<T>::hilight(Coord crd, int length)
+template <class T, class... Other>
+void Table<T, Other...>::hilight(Coord crd, int length)
 {
 	WORD fore = FOREGROUND_BLUE;
 	WORD back = BACKGROUND_RED | BACKGROUND_BLUE | BACKGROUND_GREEN | BACKGROUND_INTENSITY;
@@ -191,8 +192,8 @@ void Table<T>::hilight(Coord crd, int length)
 	//cout << wrd;
 }
 
-template <class T>
-void Table<T>::delight(Coord crd, int length)
+template <class T, class... Other>
+void Table<T, Other...>::delight(Coord crd, int length)
 {
 	WORD fore = FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY;
 
@@ -207,8 +208,8 @@ void Table<T>::delight(Coord crd, int length)
 	//cout << wrd;
 }
 
-template <class T>
-void Table<T>::drawTable()
+template <class T, class... Other>
+void Table<T, Other...>::drawTable()
 {
 	gotoxy( );
 }
