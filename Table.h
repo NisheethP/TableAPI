@@ -7,22 +7,30 @@
 #include <string>
 #include <vector>
 #include <tuple>
+#include <iostream>
 
 using std::string;
 using std::vector;
 using std::tuple;
+using std::cout;
+
+//==============================
+// CLASS DECLERATION
+//==============================
 
 template <class T, class... Other>
 class Table
 {
+	//Defining of data types
 	typedef tuple<T, Other...> TTuple;
 	typedef vector<TTuple> TVector2D;
+	typedef vector<string> StrVector;
 	class Coord;
 
 	int row;
 	int column;
 
-	vector<string> colNames;
+	StrVector colNames;
 	TVector2D tableData;
 
 	Coord initCoord;
@@ -31,19 +39,16 @@ class Table
 	Coord deltaCoord;
 
 	Coord static ConvCoord(Coord);
-
-	Coord HiToAbs (Coord);
-	Coord AbsToHi (Coord);
-
-	bool isMathFunction;
-
-	void static gotoxy(int column = wherex(), int line = wherey());
+	
+	void gotoxy(int column = wherex(), int line = wherey());
 	int static wherex();
 	int static wherey();
+	bool isOdd(int x) { return (x % 2) ? true : false; }
+	int strMid(string);
 
 public:
 	Table();
-	Table(int pRow, Coord pInitCoord, Coord pInitHiCoord, Coord pDeltaCoord, vector<string> pColNames);
+	Table(int pRow, Coord pInitCoord, Coord pInitHiCoord, Coord pDeltaCoord);
 
 	class Coord
 	{
@@ -83,6 +88,7 @@ public:
 	void setDeltaCoord(Coord pCoord);
 	void setHiCoord(Coord pCoord);
 	void setInitHiCoord(Coord pCoord);
+	void setColNames(StrVector pColNames);
 
 	int getRow();
 	int getCol();
@@ -90,32 +96,37 @@ public:
 	Coord getDeltaCoord();
 	Coord getHiCoord();
 	Coord getInitHiCoord();
+	StrVector getColNames();
 
 	void drawTable();
+
+	Coord HiToAbs(Coord);
+	Coord AbsToHi(Coord);
 
 	~Table();
 };
 
+//==============================
+// CLASS FUNCTIONS
+//==============================
+
 template <class T, class... Other>
-Table<T, Other...>::Table(int pRow, Coord pInitCoord, Coord pInitHiCoord, Coord pDeltaCoord, vector<string> pColNames) :
+Table<T, Other...>::Table(int pRow, Coord pInitCoord, Coord pInitHiCoord, Coord pDeltaCoord) :
 row(pRow),
 initCoord(pInitCoord),
 hiCoord(pInitHiCoord),
 deltaCoord(pDeltaCoord),
-initHiCoord(pInitHiCoord),
-isMathFunction(false)
+initHiCoord(pInitHiCoord)
 {
 	column = sizeof...(Other)+1;
-	if (column == 2)
-		isMathFunction = true;
-
-	colNames = pColNames;
+	for (int i = 0; i < column; ++i)
+		colNames.push_back("");
 }
 
 template <class T, class... Other>
 Table<T, Other...>::Table()
 {
-	Table(1, 1, { 0, 0 }, { 0, 0 }, { 0, 0 });
+	Table(1, { 0, 0 }, { 0, 0 }, { 0, 0 });
 }
 
 template <class T, class... Other>
@@ -174,6 +185,12 @@ int Table<T, Other...>::getCol()
 	return column;
 }
 
+template <class T, class... Other>
+void Table<T, Other...>::setColNames(StrVector pColNames)
+{
+	colNames = pColNames;
+}
+
 //==============================
 // GETTING DATA MEMBER
 //==============================
@@ -201,12 +218,18 @@ Table<T, Other...>::template Coord Table<T, Other...>::getInitHiCoord()
 	return ìnitHiCoord;
 }
 
+template <class T, class... Other>
+Table<T, Other...>::template StrVector Table<T, Other...>::getColNames()
+{
+	return colNames;
+}
+
 //=================================
-// STATIC WINDOW CURSOR FUNCTIONS
+//WINDOW CURSOR FUNCTIONS
 //=================================
 
 template <class T, class... Other>
-void static Table<T, Other...>::gotoxy(int column = wherex(), int line = wherey())
+void Table<T, Other...>::gotoxy(int column = wherex(), int line = wherey())
 {
 	COORD coord;
 	coord.X = column;
@@ -304,8 +327,37 @@ void Table<T, Other...>::delight(Coord crd, int length)
 }
 
 template <class T, class... Other>
+int Table<T, Other...>::strMid(string str)
+{
+		return (int)(str.length()) * 0.5f;
+}
+
+
+//==============================
+// TABLE INTERACTION
+//==============================
+template <class T, class... Other>
 void Table<T, Other...>::drawTable()
 {
-	gotoxy();
+	int colDividers = column - 1;
+	gotoxy(initCoord.x, initCoord.y);
+	Coord curCoord = { initCoord.x, initCoord.y };
+	
+	int colNameIter = 0;
+	for (int colIter = 0; colIter < colDividers + column; ++colIter)
+	{
+		curCoord = { initCoord.x + colIter * deltaCoord.x, initCoord.y };
+
+		gotoxy(curCoord.x, curCoord.y);
+		if (isOdd(colIter))
+			cout << "|";
+		else
+		{
+			string str = colNames[colNameIter++];
+			curCoord.x -= strMid(str);
+			gotoxy(curCoord.x, curCoord.y);
+			cout << str;
+		}		
+	}
 }
 #endif
