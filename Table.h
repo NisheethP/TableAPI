@@ -215,7 +215,7 @@ Table<T, Other...>::template Coord Table<T, Other...>::getHiCoord()
 template <class T, class... Other>
 Table<T, Other...>::template Coord Table<T, Other...>::getInitHiCoord()
 {
-	return ìnitHiCoord;
+	return Ã¬nitHiCoord;
 }
 
 template <class T, class... Other>
@@ -340,10 +340,13 @@ template <class T, class... Other>
 void Table<T, Other...>::drawTable()
 {
 	int colDividers = column - 1;
+
 	gotoxy(initCoord.x, initCoord.y);
 	Coord curCoord = { initCoord.x, initCoord.y };
 	
-	int colNameIter = 0;
+	int *colNameIter = new int;
+	colNameIter = 0;
+
 	for (int colIter = 0; colIter < colDividers + column; ++colIter)
 	{
 		curCoord = { initCoord.x + colIter * deltaCoord.x, initCoord.y };
@@ -358,6 +361,14 @@ void Table<T, Other...>::drawTable()
 			gotoxy(curCoord.x, curCoord.y);
 			cout << str;
 		}		
+	}
+	delete colNameIter;
+
+	curCoord = { initCoord.x - deltaCoord.x, InitCoord.x + 1};
+
+	for (int i = 0; i < deltaCoord.x * column; ++i)
+	{
+		
 	}
 }
 #endif
