@@ -342,12 +342,21 @@ void Table<T, Other...>::drawTable()
 	int colDividers = column - 1;
 
 	gotoxy(initCoord.x, initCoord.y);
-	Coord curCoord = { initCoord.x, initCoord.y };
+	Coord curCoord = { initCoord.x - deltaCoord.x, initCoord.y };
 	
-	int *colNameIter = new int;
-	colNameIter = 0;
+	/*
+	 *This section outputs the first row of the table.
+	 *It consists of the names of the columns and the first dividers.
+	 *The individual 'cout' is to output a vertical bar (|) for the
+	 *divider line that separates row numbers
+	 */
+	
+	gotoxy(curCoord.x, curCoord.y);
+	cout << "|";
 
-	for (int colIter = 0; colIter < colDividers + column; ++colIter)
+	int colNameIter = 0;
+	
+	for (int colIter = 0; colIter < colDividers + column ; ++colIter)
 	{
 		curCoord = { initCoord.x + colIter * deltaCoord.x, initCoord.y };
 
@@ -362,13 +371,40 @@ void Table<T, Other...>::drawTable()
 			cout << str;
 		}		
 	}
-	delete colNameIter;
 
-	curCoord = { initCoord.x - deltaCoord.x, InitCoord.x + 1};
+	/*
+	 *This prints the second row of the table.
+	 *This just outputs a series of '-' in a line
+	 *to divide the column names from the entries.
+	 *It outputs a '+' at every location that has
+	 *a vertical bar (|) in the above and below
+	 *row.
+	 */
 
-	for (int i = 0; i < deltaCoord.x * column; ++i)
+	curCoord = { initCoord.x - deltaCoord.x - 3, initCoord.y + 1 };
+	gotoxy(curCoord.x, curCoord.y);
+	for (int i = 0; i < 3; ++i)
+		cout << "-";
+
+	curCoord = { initCoord.x - deltaCoord.x, initCoord.y + 1};
+
+	for (int i = 0; i < deltaCoord.x * (column + 2); ++i)
 	{
-		
+		gotoxy(curCoord.x + i, curCoord.y);
+		if (i % 8 != 0)
+			cout << "-";
+		else
+			cout << "+";
+	}
+
+	/*
+	 *This will output the various rows.
+	 *Tuple needs to be created to get a variable of
+	 *each type in Parameter Pack. The default garbage value is used.
+	 */
+	for (int rowIter = 0; rowIter < row * deltaCoord.y; ++rowIter)
+	{
+		cout << rowIter + 1;
 	}
 }
 #endif
