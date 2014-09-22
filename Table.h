@@ -8,6 +8,9 @@
 #include <vector>
 #include <tuple>
 #include <iostream>
+#include <type_traits>
+#include <boost\utility\value_init.hpp>
+#include <boost\any.hpp>
 
 using std::string;
 using std::vector;
@@ -27,6 +30,7 @@ class Table
 	typedef vector<string> StrVector;
 	class Coord;
 
+	static int MAX_ROW;
 	int row;
 	int column;
 
@@ -107,6 +111,12 @@ public:
 };
 
 //==============================
+// STATIC CLASS MEMBERS
+//==============================
+template <class T, class... Other>
+int Table<T, Other...>::MAX_ROW = 25;
+
+//==============================
 // CLASS FUNCTIONS
 //==============================
 
@@ -118,9 +128,31 @@ hiCoord(pInitHiCoord),
 deltaCoord(pDeltaCoord),
 initHiCoord(pInitHiCoord)
 {
+	/*
+	 *Its is too complicated to make a general method to iterate over
+	 *a tuple at runtime (can't determine the return type at runtime for a variable)
+	 *So, I am hard-coding it to take only MAX_ROW (25) rows. If I ever feel the need to use
+	 *more rows, 'drawTable()' can be updated to handle more rows.
+	 *Just need to add:
+	 *    cout << std::get<ROW_NUMBER> (tableData);
+	 *after the case statement for that row
+	 */
+	if (row > MAX_ROW)
+		row = MAX_ROW;
+	boost::value_initialized<tuple<T, Other...>> initTuple;
+
 	column = sizeof...(Other)+1;
 	for (int i = 0; i < column; ++i)
 		colNames.push_back("");
+
+	tuple<T, Other...> var;
+	for (int rowIter = 0; rowIter < row; ++rowIter)
+	{
+		for (int colIter = 0; colIter < column; ++colIter)
+		{
+			tableData.push_back(initTuple);
+		}
+	}	
 }
 
 template <class T, class... Other>
@@ -391,7 +423,7 @@ void Table<T, Other...>::drawTable()
 	for (int i = 0; i < deltaCoord.x * (column + 2); ++i)
 	{
 		gotoxy(curCoord.x + i, curCoord.y);
-		if (i % 8 != 0)
+		if (i % (2*deltaCoord.x) != 0)
 			cout << "-";
 		else
 			cout << "+";
@@ -402,9 +434,37 @@ void Table<T, Other...>::drawTable()
 	 *Tuple needs to be created to get a variable of
 	 *each type in Parameter Pack. The default garbage value is used.
 	 */
+	tuple<T, Other...> templTuple;
+	int rowDataIter = 0;
+	int colDataIter = 0;
+
 	for (int rowIter = 0; rowIter < row * deltaCoord.y; ++rowIter)
 	{
-		cout << rowIter + 1;
+		for (int colIter = 0; colIter < column * deltaCoord.x; ++colIter)
+		{
+			curCoord = { initCoord.x + 2*(deltaCoord.x*colIter), initCoord.y + deltaCoord.y*rowIter + 2 };
+
+			gotoxy(curCoord.x - 2*deltaCoord.x + 2, curCoord.y);
+			if (colIter == 0)
+				cout << rowIter + 1;
+			else if (colIter % (2*deltaCoord.x) == 0)
+				cout << "|";
+			else
+			{
+				/*
+				 *As switch-case won't go to any value greater than colDataIter
+				 *I don't need to add the check for if the column is within limit of the tuple.
+				 *But, just as a failsafe, I will put the whole case inside an if statement checking that
+				 *colDataIter is within safe limits.
+				 */
+
+				
+				if (colDataIter < column)
+					++colDataIter;
+			}
+		}
+		if (rowDataIter < row)
+			++rowDataIter;
 	}
 }
 #endif
