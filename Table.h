@@ -83,16 +83,17 @@ public:
 		}
 	};
 
-	void hilight(Coord crd, int length);
-	void delight(Coord crd, int length);
+	void hilight(Coord , int );
+	void delight(Coord , int );
 
-	void setRow(int pRow);
-	void setCol(int pCol);
-	void setInitCoord(Coord pCoord);
-	void setDeltaCoord(Coord pCoord);
-	void setHiCoord(Coord pCoord);
-	void setInitHiCoord(Coord pCoord);
-	void setColNames(StrVector pColNames);
+	void setRow(int);
+	void setCol(int);
+	void setInitCoord(Coord);
+	void setDeltaCoord(Coord);
+	void setHiCoord(Coord);
+	void setInitHiCoord(Coord);
+	void setColNames(StrVector);
+	boost::any getTableTerm(int, int);
 
 	int getRow();
 	int getCol();
@@ -466,5 +467,26 @@ void Table<T, Other...>::drawTable()
 		if (rowDataIter < row)
 			++rowDataIter;
 	}
+}
+
+template <class T, class... Other>
+boost::any Table<T, Other...>::getTableTerm(int row, int col)
+{
+	if (col < column && col == 0)
+		return std::get<0>(tableData[row]);
+	if (col < column && col == 0)
+		return std::get<0>(tableData[row]);
+	if (col < column && col == 0)
+		return std::get<0>(tableData[row]);
+	if (col < column && col == 0)
+		return std::get<0>(tableData[row]);
+	if (col < column && col == 0)
+		return std::get<0>(tableData[row]);
+	if (col < column && col == 0)
+		return std::get<0>(tableData[row]);
+	if (col < column && col == 0)
+		return std::get<0>(tableData[row]);
+	if (col < column && col == 0)
+		return std::get<0>(tableData[row]);
 }
 #endif
