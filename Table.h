@@ -93,8 +93,9 @@ public:
 	void setHiCoord(Coord);
 	void setInitHiCoord(Coord);
 	void setColNames(StrVector);
-	boost::any getTableTerm(int, int);
-
+	boost::any getTupleTerm(int row, int col);
+		
+	
 	int getRow();
 	int getCol();
 	Coord getInitCoord();
@@ -129,15 +130,6 @@ hiCoord(pInitHiCoord),
 deltaCoord(pDeltaCoord),
 initHiCoord(pInitHiCoord)
 {
-	/*
-	 *Its is too complicated to make a general method to iterate over
-	 *a tuple at runtime (can't determine the return type at runtime for a variable)
-	 *So, I am hard-coding it to take only MAX_ROW (25) rows. If I ever feel the need to use
-	 *more rows, 'drawTable()' can be updated to handle more rows.
-	 *Just need to add:
-	 *    cout << std::get<ROW_NUMBER> (tableData);
-	 *after the case statement for that row
-	 */
 	if (row > MAX_ROW)
 		row = MAX_ROW;
 	boost::value_initialized<tuple<T, Other...>> initTuple;
@@ -452,14 +444,7 @@ void Table<T, Other...>::drawTable()
 				cout << "|";
 			else
 			{
-				/*
-				 *As switch-case won't go to any value greater than colDataIter
-				 *I don't need to add the check for if the column is within limit of the tuple.
-				 *But, just as a failsafe, I will put the whole case inside an if statement checking that
-				 *colDataIter is within safe limits.
-				 */
-
-				
+						
 				if (colDataIter < column)
 					++colDataIter;
 			}
@@ -469,24 +454,9 @@ void Table<T, Other...>::drawTable()
 	}
 }
 
-template <class T, class... Other>
-boost::any Table<T, Other...>::getTableTerm(int row, int col)
-{
-	if (col < column && col == 0)
-		return std::get<0>(tableData[row]);
-	if (col < column && col == 0)
-		return std::get<0>(tableData[row]);
-	if (col < column && col == 0)
-		return std::get<0>(tableData[row]);
-	if (col < column && col == 0)
-		return std::get<0>(tableData[row]);
-	if (col < column && col == 0)
-		return std::get<0>(tableData[row]);
-	if (col < column && col == 0)
-		return std::get<0>(tableData[row]);
-	if (col < column && col == 0)
-		return std::get<0>(tableData[row]);
-	if (col < column && col == 0)
-		return std::get<0>(tableData[row]);
-}
+
+//==============================
+// TUPLE INTRATION
+//==============================
+
 #endif
